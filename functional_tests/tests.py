@@ -42,6 +42,7 @@ class NewVisitorTest(LiveServerTestCase):
         # When she hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list
         inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
         edith_list_url = self.browser.current_url
         self.assertRegex(edith_list_url, '/lists/.+')
         time.sleep(1)
