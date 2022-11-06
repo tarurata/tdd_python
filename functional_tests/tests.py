@@ -1,31 +1,40 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import unittest
 import time
 import sys
+from django.test.runner import DiscoverRunner
+from django.conf import settings
+
+class TestRunner(DiscoverRunner):
+    def __init__(self, url=None, **kwargs):
+        super().__init__(**kwargs)
+        
+        print("Passed url: {}".format(url))
+        self.url = url
+    
+    @classmethod
+    def add_arguments(cls, parser):
+        DiscoverRunner.add_arguments(parser)
+        parser.add_argument('-u', '--url', help='Existing server url for test')
+        
+    def setup_test_environment(self, **kwargs):
+        super(TestRunner, self).setup_test_environment(**kwargs)
+        settings.TEST_SETTINGS = {
+            'url': self.url,
+        }
 
 
 class NewVisitorTest(StaticLiveServerTestCase):
     
-    @classmethod
-    def setUpClass(cls):
-        for arg in sys.argv:
-            if 'liveserver' in arg:
-                cls.server_url = 'http://' + arg.split('=')[1]
-                return
-        super().setUpClass()
-        cls.server_url = cls.live_server_url
-        
-    @classmethod
-    def tearDownClass(cls) -> None:
-        if cls.server_url == cls.live_server_url:
-            super().tearDownClass()
-    
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(3)
+        if hasattr(settings, 'TEST_SETTINGS'):
+            self.live_server_url = settings.TEST_SETTINGS['url']
     
     def tearDown(self):
         self.browser.quit()
@@ -36,7 +45,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
     
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Edith has heard about a cool new online to-do app. She goes to check out its homepage
-        self.browser.get(self.server_url)
+        self.browser.get(self.live_server_url)
         
         # She notices the page title and header mention to-do lists.
         self.assertIn('To-Do', self.browser.title)
@@ -81,7 +90,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.browser = webdriver.Firefox()
         
         # Francis visits the home page. There is no sign of Edith's list
-        self.browser.get(self.server_url)
+        self.browser.get(self.live_server_url)
         page_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertNotIn('Buy peacock feathers', page_text)
         self.assertNotIn('make a fly', page_text)
@@ -104,10 +113,10 @@ class NewVisitorTest(StaticLiveServerTestCase):
         
         # Satisfied, they both go back to sleep
         # self.fail('Finish the test!')
-        
+    
     def test_layout_and_styling(self):
         # Edith goes to the home page
-        self.browser.get(self.server_url)
+        self.browser.get(self.live_server_url)
         self.browser.set_window_size(1024, 768)
         
         # She notices the input box is nicely centered
