@@ -19,5 +19,5 @@ class Item(models.Model):
         return self.text
     
     class Meta:
-        ordering = ('id', )
+        ordering = ('id',)
         unique_together = ('list', 'text')
