@@ -1,3 +1,7 @@
+from lists.forms import (
+    DUPLICATE_ITEM_ERROR, EMPTY_LIST_ERROR,
+    ExistingListItemForm, ItemForm
+)
 from lists.forms import ItemForm, EMPTY_LIST_ERROR
 import re
 from unittest import skip
@@ -141,7 +145,7 @@ class ListViewTest(TestCase):
             f'listts/{list1.id}/',
             data={'text': 'textey'}
         )
-        expected_error = escape("You've already got this in your list")
+        expected_error = escape(DUPLICATE_ITEM_ERROR)
         self.assertContains(response, expected_error)
         self.assertTemplateUsed(response, 'list.html')
         self.assertEqual(Item.objects.all().count(), 1)
@@ -149,8 +153,12 @@ class ListViewTest(TestCase):
     def test_displays_item_form(self):
         list_ = List.objects.create()
         response = self.client.get(f'/lists/{list_.id}/')
-        self.assertIsInstance(response.context['form'], ItemForm)
+        self.assertIsInstance(response.context['form'], ExistingListItemForm)
         self.assertContains(response, 'name="text"')
+        
+    def test_for_invalid_input_passes_form_to_template(self):
+        response = self.post_invalid_input()
+        self.assertIsInstance(response.context['form'], ExistingListItemForm)
 
 class NewListTest(TestCase):
     def test_redirects_to_list_view(self):
@@ -174,7 +182,6 @@ class NewListTest(TestCase):
         response = self.client.post('/lists/new', data={'text': ''})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'home.html')
-        # expected_error = "You can't have an empty list item"
         expected_error = escape("You can't have an empty list item")
         self.assertContains(response, expected_error)
     

@@ -39,6 +39,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "lists",
+    "accounts",
+]
+
+AUTH_USER_MODEL = 'accounts.ListUser'
+AUTHENTICATION_BACKENDS = [
+    'accounts.authentication.PasswordlessAuthenticationBackend',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +135,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 CSRF_TRUSTED_ORIGINS = ['http://testabc.tokyo']
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'saycheese5963@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
