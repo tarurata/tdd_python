@@ -22,5 +22,5 @@ urlpatterns = [
     # path("admin/", admin.site.urls),
     re_path(r'^$', views.home_page, name='home'),
     re_path(r'^lists/', include('lists.urls')),
-    re_path(r'^accounts/', include('accounts.urls'))
+    # re_path(r'^accounts/', include('accounts.urls'))
 ]

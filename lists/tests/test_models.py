@@ -1,7 +1,7 @@
 from django.test import TestCase
 from lists.models import Item, List
 from django.core.exceptions import ValidationError
-
+from django.contrib.auth import get_user_model
 
 class ItemModelTest(TestCase):
     

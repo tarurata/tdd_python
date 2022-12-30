@@ -5,10 +5,6 @@ from selenium.webdriver.common.by import By
 
 from .base import FunctionalTest
 
-<<<<<<< HEAD
-=======
-
->>>>>>> passwordless-spike
 TEST_EMAIL = 'wmsupo@gmail.com'
 SUBJECT = 'Your login link for superlists'
 
@@ -24,11 +20,7 @@ class LoginTest(FunctionalTest):
         self.browser.find_element(By.NAME, 'email').send_keys(Keys.ENTER)
         
         # A message appears telling her an email has been sent
-<<<<<<< HEAD
         self.wait_for(lambda: self.assertIn(
-=======
-        self.wait_for(lambda : self.assertIn(
->>>>>>> passwordless-spike
             'Check your email',
             self.browser.find_element(By.TAG_NAME, 'body').text
         ))
@@ -55,8 +47,3 @@ class LoginTest(FunctionalTest):
         )
         navbar = self.browser.find_element(By.CSS_SELECTOR, '.navbar')
         self.assertIn(TEST_EMAIL, navbar.text)
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> passwordless-spike

@@ -17,6 +17,15 @@ from django.utils.html import escape
 from lists.forms import ItemForm
 
 
+class SendLoginEmailViewTest(TestCase):
+    
+    def test_redirects_to_home_page(self):
+        response = self.client.post('/accounts/send_login_email', data={
+            'email': 'wmsupo@gmail.com'
+        })
+        self.assertRedirects(response, '/')
+
+
 class HomePageTest(TestCase):
     maxDiff = None
     
@@ -112,31 +121,31 @@ class ListViewTest(TestCase):
     #     self.assertTemplateUsed(response, 'list.html')
     #     expected_error = escape("You can't have an empty list item")
     #     self.assertContains(response, expected_error)
-        
+    
     def post_invalid_input(self):
         list_ = List.objects.create()
         return self.client.post(
             f'/lists/{list_.id}/',
-            data={'text':''}
+            data={'text': ''}
         )
     
     def test_for_invalid_input_nothing_saved_to_db(self):
         self.post_invalid_input()
         self.assertEqual(Item.objects.count(), 0)
-        
+    
     def test_for_invalid_input_renders_nothing_saved_to_db(self):
         response = self.post_invalid_input()
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'list.html')
-        
+    
     def test_for_invalid_input_passes_form_to_template(self):
         response = self.post_invalid_input()
         self.assertIsInstance(response.context['form'], ItemForm)
-
+    
     def test_for_invalid_input_shows_error_on_page(self):
         response = self.post_invalid_input()
         self.assertContains(response, escape(EMPTY_LIST_ERROR))
-        
+    
     @skip
     def test_duplicate_item_validation_errors_end_up_on_lists_page(self):
         list1 = List.objects.create()
@@ -155,10 +164,11 @@ class ListViewTest(TestCase):
         response = self.client.get(f'/lists/{list_.id}/')
         self.assertIsInstance(response.context['form'], ExistingListItemForm)
         self.assertContains(response, 'name="text"')
-        
+    
     def test_for_invalid_input_passes_form_to_template(self):
         response = self.post_invalid_input()
         self.assertIsInstance(response.context['form'], ExistingListItemForm)
+
 
 class NewListTest(TestCase):
     def test_redirects_to_list_view(self):
