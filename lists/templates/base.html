@@ -7,18 +7,44 @@
   </head>
   <body>
     <div class="container">
-      <div class="navbar navbar-default" role="navigation">
+      <nav class="navbar navbar-default" role="navigation">
 	      <div class="container-fluid">
 		      <a class="navbar-brand">Superlists</a>
-		      <form method="POST" action="#" href="/" class="navbar-form navbar-right">
-			      <span>Enter email to log in:</span>
-			      <input type="text" name="email" class="form-control">
-			      {% csrf_token %}
+		      {% if user.email %}
+			      <ul class="nav navbar-nav navbar-right">
+				      <li class="navbar-text">Logged in as {{ user.email }}</li>
+				      <li><a href="#">Log out</a></li>
+			      </ul>
+			      <!-- /.nav navbar-nav navbar-right -->
+		      {% else %}
+				  <form
+						  method="POST"
+						  action="{% url 'send_login_email' %}" href="/"
+						  class="navbar-form navbar-right"
+				  >
+					  <span>Enter email to log in:</span>
+					  <input type="text" name="email" class="form-control">
+					  {% csrf_token %}
 		      </form>
+		      {% endif %}
 	      </div>
-      </div>
+      </nav>
+    
+    {% if messages %}
+	    <div class="row">
+		    <div class="col-md-8">
+				{% for message in messages %}
+					{% if message.level_tag == 'success' %}
+						<div class="alert alert-success">{{ message }}</div>
+						{% else %}
+						<div class="alert alert-warning">{{ message }}</div>
+					{% endif %}
+				{% endfor %}
+		    </div>
+	    </div>
+    {% endif %}
 
-      <div class="row">
+	    <div class="row">
         <div class="jumbotron">
           <div class="text-centert">
             <h1>{% block header_text %}{% endblock %}</h1>

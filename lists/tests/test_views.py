@@ -17,15 +17,6 @@ from django.utils.html import escape
 from lists.forms import ItemForm
 
 
-class SendLoginEmailViewTest(TestCase):
-    
-    def test_redirects_to_home_page(self):
-        response = self.client.post('/accounts/send_login_email', data={
-            'email': 'wmsupo@gmail.com'
-        })
-        self.assertRedirects(response, '/')
-
-
 class HomePageTest(TestCase):
     maxDiff = None
     
